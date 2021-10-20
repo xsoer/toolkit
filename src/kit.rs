@@ -1,9 +1,12 @@
 use iced::{
-    executor, scrollable, Application, Command, Container, Element, Length, Row, Scrollable,
+    executor, scrollable, time, Application, Command, Container, Element, Length, Row, Scrollable,
 };
 
 use crate::common::Message;
-use crate::views::{control::Controls, pwd::PwdView, time::TimeView, uuid::UuidView};
+use crate::views::{
+    clock::ClockView, control::Controls, pwd::PwdView, qrcode::QrCodeView, time::TimeView,
+    uuid::UuidView,
+};
 
 pub struct ToolKit {
     controls: Controls,
@@ -11,6 +14,8 @@ pub struct ToolKit {
     uuid_view: UuidView,
     pwd_view: PwdView,
     time_view: TimeView,
+    clock_view: ClockView,
+    qrcode_view: QrCodeView,
     ctr_scroll: scrollable::State,
     view_scroll: scrollable::State,
 }
@@ -19,11 +24,13 @@ enum Active {
     Uuid,
     Pwd,
     Time,
+    QrCode,
+    Clock,
 }
 
 impl Default for Active {
     fn default() -> Self {
-        Active::Uuid
+        Active::Clock
     }
 }
 
@@ -41,6 +48,8 @@ impl Application for ToolKit {
                 uuid_view: UuidView::default(),
                 pwd_view: PwdView::default(),
                 time_view: TimeView::default(),
+                qrcode_view: QrCodeView::default(),
+                clock_view: ClockView::default(),
                 active: Active::default(),
                 ctr_scroll: scrollable::State::new(),
                 view_scroll: scrollable::State::new(),
@@ -53,6 +62,11 @@ impl Application for ToolKit {
         "工具箱".into()
     }
 
+    fn subscription(&self) -> iced::Subscription<Self::Message> {
+        time::every(std::time::Duration::from_millis(500))
+            .map(|_| Message::ClockTick(chrono::Local::now()))
+    }
+
     fn update(
         &mut self,
         message: Self::Message,
@@ -62,6 +76,8 @@ impl Application for ToolKit {
             Message::MenuUuidPressed => self.active = Active::Uuid,
             Message::MenuPwdPressed => self.active = Active::Pwd,
             Message::MenuTimePressed => self.active = Active::Time,
+            Message::MenuQrcodePressed => self.active = Active::QrCode,
+            Message::MenuClockPressed => self.active = Active::Clock,
             Message::UuidBtnPressed => self.uuid_view.gen_uuid(),
             Message::PwdBtnPressed => self.pwd_view.gen_pwd(),
             Message::TimeBtnPressed => self.time_view.time_value = chrono::Local::now().to_string(),
@@ -88,6 +104,12 @@ impl Application for ToolKit {
             Message::TimeDateTimeChanged(v) => {
                 self.time_view.datetime_changed(v);
             }
+            Message::QrCodeDataChanged(v) => {
+                self.qrcode_view.gen_code(v);
+            }
+            Message::ClockTick(local_time) => {
+                self.clock_view.update(local_time);
+            }
             _ => {
                 println!("unhandled message")
             }
@@ -105,18 +127,24 @@ impl Application for ToolKit {
             Active::Uuid => self.uuid_view.view(),
             Active::Time => self.time_view.view(),
             Active::Pwd => self.pwd_view.view(),
+            Active::QrCode => self.qrcode_view.view(),
+            Active::Clock => self.clock_view.view(),
         };
         let view_scrol = Scrollable::new(&mut self.view_scroll)
             .width(Length::Fill)
             .push(v);
 
-        let col = Row::new().spacing(20).push(ctr_scrol).push(view_scrol);
+        let col = Row::new()
+            .spacing(20)
+            .padding(20)
+            .push(ctr_scrol)
+            .push(view_scrol);
 
         Container::new(col)
             .width(Length::Fill)
             .height(Length::Fill)
             // .center_x()
-            .center_y()
+            // .center_y()
             .padding(10)
             .into()
     }

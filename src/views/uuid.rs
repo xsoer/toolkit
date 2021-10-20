@@ -53,6 +53,7 @@ impl UuidView {
     pub fn view(&mut self) -> Element<Message> {
         Column::new()
             .align_items(Align::Center)
+            .width(Length::Fill)
             .padding(20)
             .push(
                 Row::new()

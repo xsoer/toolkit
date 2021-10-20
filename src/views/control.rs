@@ -2,6 +2,7 @@ use iced::{button, Button, Column, Element, Length, Text};
 
 use crate::common::Message;
 pub struct Controls {
+    pub clock_btn: button::State,
     pub uuid_btn: button::State,
     pub pwd_state: button::State,
     pub time_state: button::State,
@@ -16,6 +17,7 @@ pub struct Controls {
 impl Default for Controls {
     fn default() -> Self {
         Self {
+            clock_btn: button::State::new(),
             uuid_btn: button::State::new(),
             pwd_state: button::State::new(),
             time_state: button::State::new(),
@@ -39,6 +41,11 @@ impl Controls {
         let btns = Column::new()
             .spacing(10)
             .push(menu_btn(
+                &mut self.clock_btn,
+                "时钟",
+                Message::MenuClockPressed,
+            ))
+            .push(menu_btn(
                 &mut self.uuid_btn,
                 "UUID",
                 Message::MenuUuidPressed,
@@ -54,6 +61,11 @@ impl Controls {
                 Message::MenuTimePressed,
             ))
             .push(menu_btn(
+                &mut self.qrcode_state,
+                "二维码",
+                Message::MenuQrcodePressed,
+            ))
+            .push(menu_btn(
                 &mut self.encoder_state,
                 "编解码",
                 Message::MenuEncoderPressed,
@@ -67,11 +79,6 @@ impl Controls {
                 &mut self.regex_state,
                 "正则表达式",
                 Message::MenuRegexPressed,
-            ))
-            .push(menu_btn(
-                &mut self.qrcode_state,
-                "二维码",
-                Message::MenuQrcodePressed,
             ))
             .push(menu_btn(
                 &mut self.color_state,

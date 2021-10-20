@@ -1,5 +1,5 @@
 use chrono::{DateTime, FixedOffset, Local, NaiveDateTime, TimeZone};
-use iced::{button, text_input, Button, Column, Element, Length, Row, Text, TextInput};
+use iced::{button, text_input, Align, Button, Column, Element, Length, Row, Text, TextInput};
 
 use crate::common::Message;
 
@@ -53,6 +53,9 @@ impl TimeView {
 
     pub fn view(&mut self) -> Element<Message> {
         Column::new()
+            .spacing(20)
+            .align_items(Align::Center)
+            .width(Length::Fill)
             .push(
                 Row::new()
                     .spacing(20)
@@ -64,7 +67,6 @@ impl TimeView {
             )
             .push(
                 Row::new()
-                    .padding(10)
                     .spacing(20)
                     .push(Text::new("时间戳:").width(Length::Units(80)))
                     .push(
@@ -77,11 +79,10 @@ impl TimeView {
                         .width(Length::Units(200)),
                     )
                     .push(Text::new("-->"))
-                    .push(Text::new(&self.to_datetime_value)),
+                    .push(Text::new(&self.to_datetime_value).width(Length::Units(200))),
             )
             .push(
                 Row::new()
-                    .padding(10)
                     .spacing(20)
                     .push(Text::new("日期时间:").width(Length::Units(80)))
                     .push(
@@ -94,7 +95,7 @@ impl TimeView {
                         .width(Length::Units(200)),
                     )
                     .push(Text::new("-->"))
-                    .push(Text::new(&self.to_timestamp_value)),
+                    .push(Text::new(&self.to_timestamp_value).width(Length::Units(200))),
             )
             .into()
     }

@@ -10,7 +10,7 @@ readme = "README.md"
 
 [dependencies]
 chrono = "0.4"
-iced = "0.3"
+iced = {version = "0.3", features =["qr_code","canvas","tokio"]}
 itertools = "0.10"
 rand = "0.8"
 uuid = {version="0.8",features = ["serde", "v4"]}

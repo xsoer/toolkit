@@ -1,6 +1,7 @@
 #[derive(Debug, Clone)]
 pub enum Message {
     // 菜单事件
+    MenuClockPressed,
     MenuUuidPressed,
     MenuPwdPressed,
     MenuTimePressed,
@@ -29,4 +30,8 @@ pub enum Message {
     TimeBtnPressed,
     TimeTimeStampChanged(String),
     TimeDateTimeChanged(String),
+    // qrcode
+    QrCodeDataChanged(String),
+    // Clock
+    ClockTick(chrono::DateTime<chrono::Local>)
 }

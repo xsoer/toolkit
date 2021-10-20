@@ -65,6 +65,8 @@ impl PwdView {
     pub fn view(&mut self) -> Element<Message> {
         Column::new()
             .align_items(Align::Center)
+            .width(Length::Fill)
+            .spacing(20)
             .push(
                 Row::new()
                     // .padding(10)
