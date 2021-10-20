@@ -3,7 +3,6 @@ use iced::{
 };
 
 use crate::common::Message;
-use crate::utils::pwd;
 use crate::views::{control::Controls, pwd::PwdView, time::TimeView, uuid::UuidView};
 
 pub struct ToolKit {
@@ -63,32 +62,9 @@ impl Application for ToolKit {
             Message::MenuUuidPressed => self.active = Active::Uuid,
             Message::MenuPwdPressed => self.active = Active::Pwd,
             Message::MenuTimePressed => self.active = Active::Time,
-            Message::BtnUuidPressed => {
-                let mut res = vec![];
-                for _ in 0..self.uuid_view.count_value {
-                    let mut v = if self.uuid_view.check_split {
-                        uuid::Uuid::new_v4().to_string()
-                    } else {
-                        uuid::Uuid::new_v4().to_simple().to_string()
-                    };
-
-                    if self.uuid_view.check_upper {
-                        v = v.to_uppercase();
-                    }
-                    if self.uuid_view.check_brace {
-                        v = format!("{{{}}}", v);
-                    }
-                    res.push(v);
-                }
-                self.uuid_view.uuid_value = res.join("\n");
-                // self.uuid_view.uuid_value = uuid::Uuid::new_v4().to_simple().to_string()
-            }
-            Message::BtnPwdPressed => {
-                let rule = self.pwd_view.get_rule();
-                self.pwd_view.pwd_value =
-                    pwd::gen_pwd(self.pwd_view.num_value, self.pwd_view.len_value, rule)
-            }
-            Message::BtnTimePressed => self.time_view.time_value = chrono::Local::now().to_string(),
+            Message::UuidBtnPressed => self.uuid_view.gen_uuid(),
+            Message::PwdBtnPressed => self.pwd_view.gen_pwd(),
+            Message::TimeBtnPressed => self.time_view.time_value = chrono::Local::now().to_string(),
             Message::UuidCountInputChanged(v) => {
                 self.uuid_view.count_value = v.parse::<u8>().unwrap_or(1)
             }
@@ -105,6 +81,12 @@ impl Application for ToolKit {
             }
             Message::PwdNumInputChanged(v) => {
                 self.pwd_view.num_value = v.parse::<u8>().unwrap_or(1)
+            }
+            Message::TimeTimeStampChanged(v) => {
+                self.time_view.timestamp_changed(v);
+            }
+            Message::TimeDateTimeChanged(v) => {
+                self.time_view.datetime_changed(v);
             }
             _ => {
                 println!("unhandled message")

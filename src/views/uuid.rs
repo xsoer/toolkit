@@ -30,6 +30,26 @@ impl Default for UuidView {
 }
 
 impl UuidView {
+    pub fn gen_uuid(&mut self) {
+        let mut res = vec![];
+        for _ in 0..self.count_value {
+            let mut v = if self.check_split {
+                uuid::Uuid::new_v4().to_string()
+            } else {
+                uuid::Uuid::new_v4().to_simple().to_string()
+            };
+
+            if self.check_upper {
+                v = v.to_uppercase();
+            }
+            if self.check_brace {
+                v = format!("{{{}}}", v);
+            }
+            res.push(v);
+        }
+        self.uuid_value = res.join("\n");
+    }
+
     pub fn view(&mut self) -> Element<Message> {
         Column::new()
             .align_items(Align::Center)
@@ -49,7 +69,7 @@ impl UuidView {
                     )
                     .push(
                         Button::new(&mut self.uuid_state, Text::new("生成"))
-                            .on_press(Message::BtnUuidPressed),
+                            .on_press(Message::UuidBtnPressed),
                     ),
             )
             .push(

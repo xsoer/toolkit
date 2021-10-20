@@ -40,6 +40,11 @@ impl Default for PwdView {
 }
 
 impl PwdView {
+    pub fn gen_pwd(&mut self) {
+        let rule = self.get_rule();
+        self.pwd_value = pwd::gen_pwd(self.num_value, self.len_value, rule)
+    }
+
     pub fn get_rule(&self) -> usize {
         let mut rule = 0;
         if self.upper_literal {
@@ -56,6 +61,7 @@ impl PwdView {
         }
         rule
     }
+
     pub fn view(&mut self) -> Element<Message> {
         Column::new()
             .align_items(Align::Center)
@@ -118,7 +124,7 @@ impl PwdView {
             )
             .push(
                 Button::new(&mut self.pwd_state, Text::new("生成密码"))
-                    .on_press(Message::BtnPwdPressed),
+                    .on_press(Message::PwdBtnPressed),
             )
             .push(Text::new(self.pwd_value.join("\n")))
             .into()

@@ -1,5 +1,6 @@
 #[derive(Debug, Clone)]
 pub enum Message {
+    // 菜单事件
     MenuUuidPressed,
     MenuPwdPressed,
     MenuTimePressed,
@@ -9,13 +10,14 @@ pub enum Message {
     MenuQrcodePressed,
     MenuColorPressed,
     MenuCrontabPressed,
-    BtnUuidPressed,
-    BtnPwdPressed,
-    BtnTimePressed,
+    // uuid模块
+    UuidBtnPressed,
     UuidCountInputChanged(String),
     UuidCheckUpperToggled(bool),
     UuidCheckSplitToggled(bool),
     UuidCheckBraceToggled(bool),
+    // 密码模块
+    PwdBtnPressed,
     PwdCheckUpperToggled(bool),
     PwdCheckLowerToggled(bool),
     PwdCheckDigitToggled(bool),
@@ -23,4 +25,8 @@ pub enum Message {
     PwdSliderChanged(u8),
     PwdLenInputChanged(String),
     PwdNumInputChanged(String),
+    // 时间戳模块
+    TimeBtnPressed,
+    TimeTimeStampChanged(String),
+    TimeDateTimeChanged(String),
 }
