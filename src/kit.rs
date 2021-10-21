@@ -4,8 +4,8 @@ use iced::{
 
 use crate::common::Message;
 use crate::views::{
-    clock::ClockView, control::Controls, pwd::PwdView, qrcode::QrCodeView, time::TimeView,
-    uuid::UuidView,
+    base::BaseView, clock::ClockView, control::Controls, endecode::EnDeCodeView, pwd::PwdView,
+    qrcode::QrCodeView, time::TimeView, uuid::UuidView,
 };
 
 pub struct ToolKit {
@@ -16,6 +16,8 @@ pub struct ToolKit {
     time_view: TimeView,
     clock_view: ClockView,
     qrcode_view: QrCodeView,
+    base_view: BaseView,
+    endecode_view: EnDeCodeView,
     ctr_scroll: scrollable::State,
     view_scroll: scrollable::State,
 }
@@ -26,6 +28,8 @@ enum Active {
     Time,
     QrCode,
     Clock,
+    Base,
+    EnDeCode,
 }
 
 impl Default for Active {
@@ -50,6 +54,8 @@ impl Application for ToolKit {
                 time_view: TimeView::default(),
                 qrcode_view: QrCodeView::default(),
                 clock_view: ClockView::default(),
+                base_view: BaseView::default(),
+                endecode_view: EnDeCodeView::default(),
                 active: Active::default(),
                 ctr_scroll: scrollable::State::new(),
                 view_scroll: scrollable::State::new(),
@@ -78,6 +84,8 @@ impl Application for ToolKit {
             Message::MenuTimePressed => self.active = Active::Time,
             Message::MenuQrcodePressed => self.active = Active::QrCode,
             Message::MenuClockPressed => self.active = Active::Clock,
+            Message::MenuBasePressed => self.active = Active::Base,
+            Message::MenuEncoderPressed => self.active = Active::EnDeCode,
             Message::UuidBtnPressed => self.uuid_view.gen_uuid(),
             Message::PwdBtnPressed => self.pwd_view.gen_pwd(),
             Message::TimeBtnPressed => self.time_view.time_value = chrono::Local::now().to_string(),
@@ -110,6 +118,22 @@ impl Application for ToolKit {
             Message::ClockTick(local_time) => {
                 self.clock_view.update(local_time);
             }
+            Message::BaseFromValueChanged(v) => {
+                self.base_view.from_value = v;
+            }
+            Message::BaseRadioSelected(v) => {
+                self.base_view.base_radio = Some(v);
+            }
+            Message::BaseBtnChanged => {
+                self.base_view.convert();
+            }
+            Message::EnDeCodeEncodeChanged(v) => {
+                self.endecode_view.encode_value = v;
+            }
+            Message::EnDeCodeDecodeChanged(v) => {
+                self.endecode_view.decode_value = v;
+            }
+            Message::EnDeCodeRadioSelected(v) => self.endecode_view.endecode_radio = Some(v),
             _ => {
                 println!("unhandled message")
             }
@@ -129,6 +153,8 @@ impl Application for ToolKit {
             Active::Pwd => self.pwd_view.view(),
             Active::QrCode => self.qrcode_view.view(),
             Active::Clock => self.clock_view.view(),
+            Active::Base => self.base_view.view(),
+            Active::EnDeCode => self.endecode_view.view(),
         };
         let view_scrol = Scrollable::new(&mut self.view_scroll)
             .width(Length::Fill)
